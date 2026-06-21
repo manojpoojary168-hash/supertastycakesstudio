@@ -1,0 +1,43 @@
+# Render Blueprint — Super Tasty Cakes Studio
+# Docs: https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: super-tasty-cakes
+    runtime: python
+    plan: free
+    buildCommand: ./build.sh
+    startCommand: gunicorn config.wsgi --log-file -
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings.production
+      - key: PYTHON_VERSION
+        value: 3.13.2
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        sync: false
+      - key: CSRF_TRUSTED_ORIGINS
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: super-tasty-cakes-db
+          property: connectionString
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: DEFAULT_WHATSAPP_NUMBER
+        value: "919075075993"
+      - key: SECURE_SSL_REDIRECT
+        value: "True"
+
+databases:
+  - name: super-tasty-cakes-db
+    plan: free
+    databaseName: super_tasty_cakes
+    user: super_tasty_cakes

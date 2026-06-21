@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load bakery_tags %}
+
+{% block title %}Gallery — {{ site_settings.site_name }}{% endblock %}
+
+{% block content %}
+<section class="page-hero section--beige">
+    <div class="container text-center">
+        {% include "partials/section_header.html" with eyebrow="Our Work" title="Photo Gallery" subtitle="Celebration cakes we've crafted with love" %}
+    </div>
+</section>
+
+<section class="category-filter">
+    <div class="container">
+        <div class="category-filter__pills">
+            <a href="{% url 'gallery:gallery' %}"
+               class="category-filter__pill {% if not active_category %}is-active{% endif %}">All</a>
+            {% for category in categories %}
+            <a href="{% url 'gallery:gallery' %}?category={{ category.slug }}"
+               class="category-filter__pill {% if active_category == category.slug %}is-active{% endif %}">
+                {{ category.name }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section section--cream">
+    <div class="container">
+        {% if images %}
+        <div class="row g-3">
+            {% for image in images %}
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="gallery-preview__item ratio ratio-1x1 gallery-thumb"
+                     role="button" data-bs-toggle="modal" data-bs-target="#lightboxModal"
+                     data-src="{% gallery_image image 800 800 %}"
+                     data-caption="{{ image.caption|default:'' }}">
+                    {% gallery_image image 400 400 as g_src %}
+                    <img src="{{ g_src }}" alt="{{ image.caption|default:'Gallery photo' }}" class="object-fit-cover" loading="lazy">
+                    <div class="gallery-preview__overlay"><i class="bi bi-zoom-in"></i></div>
+                </div>
+                {% if image.caption %}
+                <p class="gallery-caption">{{ image.caption }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="bi bi-images"></i>
+            <p>No photos in this category yet.</p>
+            <a href="{% url 'gallery:gallery' %}" class="btn btn-outline-coffee">View All</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<div class="modal fade lightbox-modal" id="lightboxModal" tabindex="-1" aria-labelledby="lightboxLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p class="modal-title" id="lightboxLabel"></p>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <img id="lightboxImage" src="" alt="" class="w-100">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.querySelectorAll('.gallery-thumb').forEach(function (el) {
+    el.addEventListener('click', function () {
+        document.getElementById('lightboxImage').src = el.dataset.src;
+        document.getElementById('lightboxImage').alt = el.dataset.caption || 'Gallery photo';
+        document.getElementById('lightboxLabel').textContent = el.dataset.caption || '';
+    });
+});
+</script>
+{% endblock %}

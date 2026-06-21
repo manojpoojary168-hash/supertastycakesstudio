@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% load whatsapp_tags bakery_tags %}
+
+{% block title %}{{ cake.name }} — {{ site_settings.site_name }}{% endblock %}
+
+{% block content %}
+<section class="section section--cream">
+    <div class="container">
+        <nav aria-label="breadcrumb" class="breadcrumb-nav mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'cakes:list' %}">Cakes</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ cake.name }}</li>
+            </ol>
+        </nav>
+
+        <div class="row g-5">
+            <div class="col-lg-5">
+                <div class="detail-image-wrap ratio ratio-4x5">
+                    {% cake_image cake 600 750 as img_src %}
+                    <img src="{{ img_src }}" alt="{{ cake.name }}" class="object-fit-cover">
+                </div>
+            </div>
+
+            <div class="col-lg-7">
+                <span class="category-badge mb-3 d-inline-block">{{ cake.category.name }}</span>
+                <h1 class="detail-title">{{ cake.name }}</h1>
+                <p class="detail-description">{{ cake.description }}</p>
+
+                <div class="pricing-box">
+                    <h2 class="pricing-box__title">Pricing</h2>
+                    <ul class="pricing-box__list">
+                        {% if cake.price_half_kg %}
+                        <li><span>0.5 kg</span><strong>₹{{ cake.price_half_kg }}</strong></li>
+                        {% endif %}
+                        {% if cake.price_one_kg %}
+                        <li><span>1 kg</span><strong>₹{{ cake.price_one_kg }}</strong></li>
+                        {% endif %}
+                        {% if cake.price_per_piece %}
+                        <li><span>Per piece / box</span><strong>₹{{ cake.price_per_piece }}</strong></li>
+                        {% endif %}
+                        {% if cake.price_display_note %}
+                        <li><span>Note</span><strong>{{ cake.price_display_note }}</strong></li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <div class="order-options mb-4">
+                    {% if cake.price_half_kg or cake.price_one_kg %}
+                    <label class="form-label order-options__label">Select Weight</label>
+                    <div class="d-flex flex-wrap gap-2 mb-4" id="weightOptions">
+                        {% if cake.price_half_kg %}
+                        <input type="radio" class="btn-check" name="weight" id="w-half" value="0.5 kg" data-price="₹{{ cake.price_half_kg }}" checked>
+                        <label class="btn btn-outline-coffee btn-sm" for="w-half">0.5 kg</label>
+                        {% endif %}
+                        {% if cake.price_one_kg %}
+                        <input type="radio" class="btn-check" name="weight" id="w-one" value="1 kg" data-price="₹{{ cake.price_one_kg }}" {% if not cake.price_half_kg %}checked{% endif %}>
+                        <label class="btn btn-outline-coffee btn-sm" for="w-one">1 kg</label>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    {% if cake.has_egg_option or cake.has_eggless_option %}
+                    <label class="form-label order-options__label">Egg Preference</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% if cake.has_eggless_option %}
+                        <input type="radio" class="btn-check" name="egg_type" id="eggless" value="Eggless" checked>
+                        <label class="btn btn-outline-coffee btn-sm" for="eggless">Eggless</label>
+                        {% endif %}
+                        {% if cake.has_egg_option %}
+                        <input type="radio" class="btn-check" name="egg_type" id="egg" value="Egg" {% if not cake.has_eggless_option %}checked{% endif %}>
+                        <label class="btn btn-outline-coffee btn-sm" for="egg">Egg</label>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <a id="whatsappOrderBtn"
+                   href="{% whatsapp_url_tag message_type='cake' cake=cake %}"
+                   target="_blank" rel="noopener noreferrer"
+                   class="btn btn-whatsapp btn-lg px-5"
+                   data-cake-name="{{ cake.name }}">
+                    <i class="bi bi-whatsapp me-2"></i>Order on WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    const btn = document.getElementById('whatsappOrderBtn');
+    if (!btn) return;
+    const weightInputs = document.querySelectorAll('input[name="weight"]');
+    const eggInputs = document.querySelectorAll('input[name="egg_type"]');
+    const baseNumber = '{{ contact.whatsapp_number|default:"919075075993" }}';
+
+    function buildMessage() {
+        const weight = document.querySelector('input[name="weight"]:checked');
+        const egg = document.querySelector('input[name="egg_type"]:checked');
+        const w = weight ? weight.value : '1 kg';
+        const p = weight ? weight.dataset.price : '{% if cake.price_display_note %}{{ cake.price_display_note }}{% elif cake.price_one_kg %}₹{{ cake.price_one_kg }}{% elif cake.price_per_piece %}₹{{ cake.price_per_piece }}{% else %}—{% endif %}';
+        const e = egg ? egg.value : 'Eggless';
+        return encodeURIComponent(
+            `Hello Super Tasty Cakes Studio,\n\nI would like to order:\n\n` +
+            `🎂 Cake: ${btn.dataset.cakeName}\n` +
+            `⚖️ Weight: ${w}\n` +
+            `💰 Price: ${p}\n` +
+            `🥚 Type: ${e}\n\n` +
+            `Please let me know availability and delivery date.\n\nThank you!`
+        );
+    }
+
+    function updateLink() {
+        btn.href = `https://wa.me/${baseNumber}?text=${buildMessage()}`;
+    }
+
+    weightInputs.forEach(el => el.addEventListener('change', updateLink));
+    eggInputs.forEach(el => el.addEventListener('change', updateLink));
+    updateLink();
+})();
+</script>
+{% endblock %}

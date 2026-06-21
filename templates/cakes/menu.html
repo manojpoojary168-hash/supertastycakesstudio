@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load whatsapp_tags %}
+
+{% block title %}Menu & Pricing — {{ site_settings.site_name }}{% endblock %}
+
+{% block content %}
+<section class="page-hero section--beige">
+    <div class="container text-center">
+        {% include "partials/section_header.html" with eyebrow="Full Price List" title="Menu & Pricing" subtitle="All prices in INR — order any item on WhatsApp" %}
+    </div>
+</section>
+
+<section class="section section--cream">
+    <div class="container">
+        {% for group in menu_data %}
+        <div class="menu-group">
+            <h2 class="menu-group__title">{{ group.category.name }}</h2>
+            <div class="table-responsive">
+                <table class="menu-table">
+                    <thead>
+                        <tr>
+                            <th>Cake</th>
+                            <th class="text-end d-none d-md-table-cell">0.5 kg</th>
+                            <th class="text-end">1 kg</th>
+                            <th class="text-end d-none d-md-table-cell">Per Piece</th>
+                            <th class="text-end">Order</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cake in group.cakes %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'cakes:detail' cake.slug %}" class="menu-table__name">{{ cake.name }}</a>
+                                {% if cake.short_description %}
+                                <span class="menu-table__desc d-block">{{ cake.short_description|truncatewords:10 }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end d-none d-md-table-cell">
+                                {% if cake.price_half_kg %}₹{{ cake.price_half_kg }}{% else %}—{% endif %}
+                            </td>
+                            <td class="text-end">
+                                {% if cake.price_one_kg %}₹{{ cake.price_one_kg }}
+                                {% elif cake.price_display_note %}{{ cake.price_display_note }}
+                                {% else %}—{% endif %}
+                            </td>
+                            <td class="text-end d-none d-md-table-cell">
+                                {% if cake.price_per_piece %}₹{{ cake.price_per_piece }}{% else %}—{% endif %}
+                            </td>
+                            <td class="text-end">
+                                <a href="{% whatsapp_url_tag message_type='cake' cake=cake %}"
+                                   target="_blank" rel="noopener noreferrer"
+                                   class="btn btn-whatsapp btn-sm"
+                                   title="Order on WhatsApp">
+                                    <i class="bi bi-whatsapp"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <p>Menu coming soon. Please contact us on WhatsApp for current prices.</p>
+            {% whatsapp_link css_class="btn btn-whatsapp" %}
+        </div>
+        {% endfor %}
+
+        <div class="text-center mt-5 pt-4">
+            <p class="text-muted mb-3">Prices may vary for custom designs. Eggless options available on request.</p>
+            {% whatsapp_link css_class="btn btn-whatsapp btn-lg px-5" label="Order on WhatsApp" %}
+        </div>
+    </div>
+</section>
+{% endblock %}

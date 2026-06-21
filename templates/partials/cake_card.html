@@ -1,0 +1,34 @@
+{% load whatsapp_tags bakery_tags %}
+<article class="card h-100 cake-card">
+    <a href="{% url 'cakes:detail' cake.slug %}" class="text-decoration-none">
+        <div class="ratio ratio-4x5 overflow-hidden">
+            {% cake_image cake 400 500 as img_src %}
+            <img src="{{ img_src }}" alt="{{ cake.name }}" class="object-fit-cover" loading="lazy">
+        </div>
+    </a>
+    <div class="card-body d-flex flex-column">
+        <span class="category-badge mb-2 align-self-start">{{ cake.category.name }}</span>
+        <h3 class="card-title mb-1">
+            <a href="{% url 'cakes:detail' cake.slug %}">{{ cake.name }}</a>
+        </h3>
+        <p class="card-text flex-grow-1">{{ cake.short_description|default:cake.description|truncatewords:15 }}</p>
+        <div class="d-flex justify-content-between align-items-center mt-auto pt-2">
+            <p class="price-tag mb-0">
+                <span>From </span>
+                {% if cake.price_display_note %}
+                    {{ cake.price_display_note }}
+                {% elif cake.starting_price %}
+                    ₹{{ cake.starting_price }}
+                {% else %}
+                    —
+                {% endif %}
+            </p>
+            <a href="{% whatsapp_url_tag message_type='cake' cake=cake %}"
+               target="_blank" rel="noopener noreferrer"
+               class="btn btn-whatsapp btn-whatsapp-icon"
+               aria-label="Order {{ cake.name }} on WhatsApp">
+                <i class="bi bi-whatsapp"></i>
+            </a>
+        </div>
+    </div>
+</article>

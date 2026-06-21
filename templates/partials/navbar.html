@@ -1,0 +1,50 @@
+{% load static whatsapp_tags %}
+<nav class="navbar navbar-expand-lg site-navbar sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'core:home' %}">
+            <img src="{% static 'images/logo.svg' %}" alt="{{ site_settings.site_name|default:'Super Tasty Cakes Studio' }}" class="brand-logo">
+            <span class="brand-text d-none d-sm-inline">
+                Super Tasty
+                <small>Cakes Studio</small>
+            </span>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#mainNavbar" aria-controls="mainNavbar"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+                       href="{% url 'core:home' %}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.app_name == 'cakes' %}active{% endif %}"
+                       href="{% url 'cakes:list' %}">Cakes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'menu' %}active{% endif %}"
+                       href="{% url 'menu' %}">Menu</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.app_name == 'gallery' %}active{% endif %}"
+                       href="{% url 'gallery:gallery' %}">Gallery</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.app_name == 'custom_orders' %}active{% endif %}"
+                       href="{% url 'custom_orders:request' %}">Custom Cake</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}"
+                       href="{% url 'core:contact' %}">Contact</a>
+                </li>
+                <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
+                    {% whatsapp_link label="Order Now" css_class="btn btn-whatsapp btn-sm px-3" %}
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

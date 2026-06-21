@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Our Cakes — {{ site_settings.site_name }}{% endblock %}
+
+{% block content %}
+<section class="page-hero section--beige">
+    <div class="container text-center">
+        {% include "partials/section_header.html" with eyebrow="Browse & Order" title="Our Cake Collection" subtitle="Filter by category and order directly on WhatsApp" %}
+    </div>
+</section>
+
+<section class="category-filter">
+    <div class="container">
+        <div class="category-filter__pills">
+            <a href="{% url 'cakes:list' %}"
+               class="category-filter__pill {% if not active_category %}is-active{% endif %}">All</a>
+            {% for category in categories %}
+            <a href="{% url 'cakes:list_by_category' category.slug %}"
+               class="category-filter__pill {% if active_category and active_category.slug == category.slug %}is-active{% endif %}">
+                {{ category.name }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section section--cream">
+    <div class="container">
+        {% if active_category %}
+        <p class="text-center text-muted mb-4">{{ active_category.name }}</p>
+        {% endif %}
+
+        {% if cakes %}
+        <div class="row g-4">
+            {% for cake in cakes %}
+            <div class="col-6 col-md-4 col-lg-3">
+                {% include "partials/cake_card.html" with cake=cake %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="bi bi-cake2"></i>
+            <p>No cakes in this category yet.</p>
+            <a href="{% url 'cakes:list' %}" class="btn btn-outline-coffee">View All Cakes</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

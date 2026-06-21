@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% load whatsapp_tags %}
+
+{% block title %}Contact — {{ site_settings.site_name }}{% endblock %}
+
+{% block content %}
+<section class="page-hero section--beige">
+    <div class="container text-center">
+        {% include "partials/section_header.html" with eyebrow="Reach Us" title="Contact Us" subtitle="We'd love to hear from you — order, enquire, or just say hello" %}
+    </div>
+</section>
+
+<section class="section section--cream">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-5">
+                <div class="info-card mb-4">
+                    <h2 class="info-card__title">Get in Touch</h2>
+
+                    <div class="info-item">
+                        <div class="info-item__icon info-item__icon--whatsapp"><i class="bi bi-whatsapp"></i></div>
+                        <div>
+                            <p class="info-item__label">WhatsApp</p>
+                            {% whatsapp_link label=contact.phone_primary css_class="info-item__value info-item__value--link" %}
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-item__icon"><i class="bi bi-telephone"></i></div>
+                        <div>
+                            <p class="info-item__label">Phone</p>
+                            <a href="tel:{{ contact.phone_primary }}" class="info-item__value info-item__value--link">{{ contact.phone_primary }}</a>
+                        </div>
+                    </div>
+
+                    {% if site_settings.instagram_url %}
+                    <div class="info-item">
+                        <div class="info-item__icon"><i class="bi bi-instagram"></i></div>
+                        <div>
+                            <p class="info-item__label">Instagram</p>
+                            <a href="{{ site_settings.instagram_url }}" target="_blank" rel="noopener noreferrer"
+                               class="info-item__value info-item__value--link">
+                                @{{ site_settings.instagram_handle|default:"supertastycakes" }}
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if contact.email %}
+                    <div class="info-item">
+                        <div class="info-item__icon"><i class="bi bi-envelope"></i></div>
+                        <div>
+                            <p class="info-item__label">Email</p>
+                            <a href="mailto:{{ contact.email }}" class="info-item__value info-item__value--link">{{ contact.email }}</a>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="info-item">
+                        <div class="info-item__icon"><i class="bi bi-geo-alt"></i></div>
+                        <div>
+                            <p class="info-item__label">Address</p>
+                            <p class="info-item__value mb-0">
+                                {% if contact.business_address %}{{ contact.business_address }}<br>{% endif %}
+                                {{ contact.city }}, {{ contact.state }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="info-item mb-0">
+                        <div class="info-item__icon"><i class="bi bi-clock"></i></div>
+                        <div>
+                            <p class="info-item__label">Business Hours</p>
+                            <p class="info-item__value mb-0" style="white-space: pre-line;">{{ contact.business_hours|default:"Mon – Sat: 9 AM – 7 PM\nSunday: By appointment" }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h2 class="info-card__title">Delivery Areas</h2>
+                    <div class="delivery-pills justify-content-start">
+                        {% for area in contact.delivery_areas_list %}
+                        <span class="delivery-pill"><i class="bi bi-geo-alt-fill"></i>{{ area }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-7">
+                <div class="map-card">
+                    {% if site_settings.google_maps_embed %}
+                    <div class="ratio ratio-16x9">
+                        {{ site_settings.google_maps_embed|safe }}
+                    </div>
+                    {% else %}
+                    <div class="map-placeholder">
+                        <i class="bi bi-map"></i>
+                        <p class="mb-1 fw-semibold">{{ contact.city }}, {{ contact.state }}</p>
+                        <p class="small text-muted mb-0">Add Google Maps embed in Admin → Site Settings</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-5">
+            {% whatsapp_link css_class="btn btn-whatsapp btn-lg px-5" label="Chat on WhatsApp" %}
+        </div>
+    </div>
+</section>
+{% endblock %}

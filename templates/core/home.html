@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% load static whatsapp_tags bakery_tags %}
+
+{% block title %}Home — {{ site_settings.site_name }}{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="hero fade-in">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6 order-2 order-lg-1">
+                <p class="hero__eyebrow">{{ site_settings.business_tagline|default:"Byndoor's Favourite Bakery" }}</p>
+                <h1 class="hero__title">{{ site_settings.hero_headline|default:"Handcrafted Cakes for Every Celebration" }}</h1>
+                <p class="hero__subtitle">{{ site_settings.hero_subheadline }}</p>
+                <div class="hero__actions">
+                    {% whatsapp_link css_class="btn btn-whatsapp btn-lg px-4" %}
+                    <a href="{% url 'cakes:list' %}" class="btn btn-outline-coffee btn-lg px-4">View Cakes</a>
+                </div>
+            </div>
+            <div class="col-lg-6 order-1 order-lg-2">
+                <div class="hero__image-wrap ratio ratio-4x3">
+                    {% if site_settings.hero_image %}
+                    <img src="{{ site_settings.hero_image.url }}" alt="Signature cake" class="object-fit-cover">
+                    {% else %}
+                    {% placeholder_image "Super Tasty Cakes Studio" 900 675 as hero_src %}
+                    <img src="{{ hero_src }}" alt="Super Tasty Cakes Studio" class="object-fit-cover">
+                    {% endif %}
+                    <div class="hero__badge">
+                        <i class="bi bi-star-fill me-1"></i> Est. {{ site_settings.established_year|default:"2021" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURED CAKES -->
+<section class="section section--cream">
+    <div class="container">
+        {% include "partials/section_header.html" with eyebrow="Our Creations" title="Featured Cakes" subtitle="Handcrafted favourites loved by our customers" %}
+        <div class="row g-4">
+            {% for cake in featured_cakes %}
+            <div class="col-6 col-lg-4">
+                {% include "partials/cake_card.html" with cake=cake %}
+            </div>
+            {% empty %}
+            <div class="col-12 text-center text-muted py-4">
+                <p>Featured cakes coming soon. <a href="{% url 'cakes:list' %}">Browse our collection</a>.</p>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-5">
+            <a href="{% url 'cakes:list' %}" class="btn btn-outline-coffee px-4">View All Cakes</a>
+        </div>
+    </div>
+</section>
+
+<!-- WHY CHOOSE US -->
+<section class="section section--beige">
+    <div class="container">
+        {% include "partials/section_header.html" with eyebrow="The Difference" title="Why Choose Us" subtitle="What makes every Super Tasty cake special" %}
+        <div class="row g-4">
+            {% for usp in usps %}
+            <div class="col-sm-6 col-lg-3">
+                <div class="usp-card">
+                    <div class="usp-card__icon"><i class="bi {{ usp.icon|default:'bi-star' }}"></i></div>
+                    <h3 class="usp-card__title">{{ usp.title }}</h3>
+                    <p class="usp-card__text">{{ usp.description }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- DELIVERY AREAS -->
+<section class="section delivery-section">
+    <div class="container">
+        {% include "partials/section_header.html" with eyebrow="We Deliver" title="Delivery Areas" subtitle="Fresh cakes delivered to your doorstep" %}
+        <div class="delivery-pills">
+            {% for area in delivery_areas %}
+            <span class="delivery-pill"><i class="bi bi-geo-alt-fill"></i>{{ area }}</span>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="section section--beige reviews-section">
+    <div class="container">
+        {% include "partials/section_header.html" with eyebrow="Kind Words" title="Customer Reviews" subtitle="What our happy customers say" %}
+        <div id="reviewsCarousel" class="carousel slide pb-4" data-bs-ride="carousel" data-bs-interval="6000">
+            {% if reviews|length > 1 %}
+            <div class="carousel-indicators position-relative mb-4">
+                {% for review in reviews %}
+                <button type="button" data-bs-target="#reviewsCarousel" data-bs-slide-to="{{ forloop.counter0 }}"
+                        {% if forloop.first %}class="active" aria-current="true"{% endif %}
+                        aria-label="Review {{ forloop.counter }}"></button>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <div class="carousel-inner">
+                {% for review in reviews %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <div class="review-card">
+                        <span class="review-card__quote">&ldquo;</span>
+                        <div class="review-card__stars">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= review.rating %}<i class="bi bi-star-fill"></i>{% else %}<i class="bi bi-star"></i>{% endif %}
+                            {% endfor %}
+                        </div>
+                        <p class="review-card__text">{{ review.review_text }}</p>
+                        <p class="review-card__author">{{ review.customer_name }}</p>
+                        <p class="review-card__location">{{ review.customer_location }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% if reviews|length > 1 %}
+            <button class="carousel-control-prev" type="button" data-bs-target="#reviewsCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#reviewsCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- GALLERY PREVIEW -->
+<section class="section section--cream">
+    <div class="container">
+        {% include "partials/section_header.html" with eyebrow="Portfolio" title="From Our Kitchen" subtitle="A glimpse of celebrations we've been part of" %}
+        <div class="row g-3">
+            {% for image in gallery_images %}
+            <div class="col-6 col-md-3">
+                <div class="gallery-preview__item ratio ratio-1x1">
+                    {% gallery_image image 400 400 as g_src %}
+                    <img src="{{ g_src }}" alt="{{ image.caption|default:'Gallery photo' }}" class="object-fit-cover" loading="lazy">
+                    <div class="gallery-preview__overlay"><i class="bi bi-zoom-in"></i></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-5">
+            {% if site_settings.instagram_url %}
+            <a href="{{ site_settings.instagram_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-coffee px-4">
+                <i class="bi bi-instagram me-2"></i>Follow on Instagram
+            </a>
+            {% else %}
+            <a href="{% url 'gallery:gallery' %}" class="btn btn-outline-coffee px-4">
+                <i class="bi bi-images me-2"></i>View Full Gallery
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="section cta-section">
+    <div class="container position-relative">
+        <h2 class="cta-section__title">Ready to Order?</h2>
+        <p class="cta-section__text">Chat with us on WhatsApp — we'd love to bake something special for your celebration.</p>
+        {% whatsapp_link css_class="btn btn-whatsapp btn-lg px-5" label="Order on WhatsApp" %}
+    </div>
+</section>
+
+{% endblock %}

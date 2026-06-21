@@ -1,0 +1,79 @@
+{% load static whatsapp_tags %}
+<footer class="site-footer">
+    <div class="container">
+        <div class="row g-5">
+            <!-- Brand -->
+            <div class="col-lg-4 site-footer__brand">
+                <img src="{% static 'images/logo.svg' %}" alt="{{ site_settings.site_name|default:'Super Tasty Cakes Studio' }}">
+                <h5>{{ site_settings.site_name|default:"Super Tasty Cakes Studio" }}</h5>
+                <p>{{ site_settings.business_tagline|default:"Handcrafted cakes for every celebration — baked fresh in Byndoor." }}</p>
+                <div class="site-footer__social">
+                    {% if site_settings.instagram_url %}
+                    <a href="{{ site_settings.instagram_url }}" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                        <i class="bi bi-instagram"></i>
+                    </a>
+                    {% else %}
+                    <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                    {% endif %}
+                    <a href="{% whatsapp_float_url %}" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+                        <i class="bi bi-whatsapp"></i>
+                    </a>
+                    {% if contact.phone_primary %}
+                    <a href="tel:{{ contact.phone_primary }}" aria-label="Phone">
+                        <i class="bi bi-telephone"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="col-6 col-lg-4">
+                <p class="site-footer__heading">Explore</p>
+                <ul class="list-unstyled site-footer__links">
+                    <li><a href="{% url 'cakes:list' %}">Our Cakes</a></li>
+                    <li><a href="{% url 'menu' %}">Pricing Menu</a></li>
+                    <li><a href="{% url 'custom_orders:request' %}">Custom Cake</a></li>
+                    <li><a href="{% url 'gallery:gallery' %}">Gallery</a></li>
+                    <li><a href="{% url 'core:contact' %}">Contact Us</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact -->
+            <div class="col-6 col-lg-4">
+                <p class="site-footer__heading">Get in Touch</p>
+                <ul class="list-unstyled site-footer__contact">
+                    {% if contact.phone_primary %}
+                    <li>
+                        <i class="bi bi-telephone"></i>
+                        <a href="tel:{{ contact.phone_primary }}">{{ contact.phone_primary }}</a>
+                    </li>
+                    {% endif %}
+                    {% if contact.email %}
+                    <li>
+                        <i class="bi bi-envelope"></i>
+                        <a href="mailto:{{ contact.email }}">{{ contact.email }}</a>
+                    </li>
+                    {% endif %}
+                    <li>
+                        <i class="bi bi-geo-alt"></i>
+                        <span>
+                            {% if contact.business_address %}{{ contact.business_address }}, {% endif %}
+                            {{ contact.city|default:"Byndoor" }}, {{ contact.state|default:"Karnataka" }}
+                        </span>
+                    </li>
+                    <li>
+                        <i class="bi bi-truck"></i>
+                        <span>Delivery: Byndoor · Gangolli · Kundapur</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <hr class="site-footer__divider">
+
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center site-footer__bottom">
+            <p class="mb-2 mb-md-0">&copy; {% now "Y" %} {{ site_settings.site_name|default:"Super Tasty Cakes Studio" }}. All rights reserved.</p>
+            <p class="mb-0">Est. <span>{{ site_settings.established_year|default:"2021" }}</span></p>
+        </div>
+    </div>
+</footer>
