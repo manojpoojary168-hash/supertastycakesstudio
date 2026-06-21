@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
+from cloudinary.models import CloudinaryField
 
 
 class GalleryCategory(models.Model):
@@ -27,7 +28,7 @@ class GalleryImage(models.Model):
         on_delete=models.PROTECT,
         related_name="images",
     )
-    image = models.ImageField(upload_to="gallery/", blank=True, null=True)
+    image = CloudinaryField('image', blank=True, null=True)
     caption = models.CharField(max_length=200, blank=True)
     is_featured = models.BooleanField(
         default=False,
