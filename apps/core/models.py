@@ -1,6 +1,7 @@
 from django.db import models
-
+from cloudinary.models import CloudinaryField
 from .mixins import SingletonModelMixin
+
 
 
 class SiteSettings(SingletonModelMixin, models.Model):
@@ -11,7 +12,7 @@ class SiteSettings(SingletonModelMixin, models.Model):
         default="Fresh, beautiful cakes delivered across Byndoor, Gangolli, Kundapur & nearby areas.",
     )
     business_tagline = models.CharField(max_length=200, blank=True)
-    hero_image = models.ImageField(upload_to="site/", blank=True, null=True)
+    hero_image = CloudinaryField('image', blank=True, null=True)
     about_text = models.TextField(blank=True)
     established_year = models.PositiveIntegerField(default=2021)
     owner_name = models.CharField(max_length=100, blank=True)
