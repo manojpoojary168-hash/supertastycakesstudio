@@ -1,4 +1,5 @@
 from django.db import models
+from cloudinary.models import CloudinaryField
 from django.utils.text import slugify
 
 
@@ -31,7 +32,7 @@ class Cake(models.Model):
     slug = models.SlugField(max_length=220, unique=True, blank=True)
     short_description = models.CharField(max_length=160, blank=True)
     description = models.TextField(blank=True)
-    image = models.ImageField(upload_to="cakes/", blank=True, null=True)
+    image = CloudinaryField("image", blank=True, null=True)
     price_half_kg = models.DecimalField(
         max_digits=8, decimal_places=2, null=True, blank=True
     )
