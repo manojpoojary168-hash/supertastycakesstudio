@@ -107,6 +107,7 @@ CLOUDINARY_STORAGE = {
     "CLOUD_NAME": env("CLOUDINARY_CLOUD_NAME", default=""),
     "API_KEY": env("CLOUDINARY_API_KEY", default=""),
     "API_SECRET": env("CLOUDINARY_API_SECRET", default=""),
+    "SECURE": True,
 }
 
 # WhatsApp default (overridden by ContactInformation model once models exist)
